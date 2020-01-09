@@ -26,11 +26,6 @@ publication_type = '1'
 # The API allows a fixed number of 10 for each query, should not increase/decrease this limit param
 limit = 10
 
-"""
-Custom Filters that this Crawler is using to limit the result that is not supported by the MicrosoftAcademic Filter
-We recommend to manually change the in_year parameter for your crawling purpose.
-"""
-in_year = 2000
 abstract_required = True
 
 """
@@ -57,27 +52,32 @@ getPayload = lambda term, offset, year: {
 
 def crawl_data(term, offset, year, totalItems = 0):
   percentage = '0%' if totalItems == 0 else '{:.0%}'.format(offset/totalItems)
-  print(f'Fetching {offset}/{totalItems} ({percentage})\n{base_url}')
+  print(f'Fetching {year}, {term} = {offset}/{totalItems} ({percentage})')
 
   res = requests.post(base_url, json=getPayload(term, offset, year), headers=headers)
   return res.json()
 
-def crawling():
+def crawling(year):
   author_separator = ','
 
-  currentOffset = 0
-  totalItems = 0
-
   for term in terms:
-    with open(f'MicrosoftAcademic-{term}-{in_year}-{datetime.date.today()}.csv', 'w', newline='', encoding='utf-8') as file:
+    with open(f'MicrosoftAcademic-{term}-{year}-{datetime.date.today()}.csv', 'w', newline='', encoding='utf-8') as file:
       writer = csv.writer(file)
       writer.writerow(['#', 'Title', 'Authors', 'Abstract', 'Announced', 'URL', 'DOI'])
 
+      currentOffset = 0
+      totalItems = 0
       count_result = 0
+
       while True:
-        res = crawl_data(term, currentOffset, in_year, totalItems)
-        currentOffset = res['o']
+        res = crawl_data(term, currentOffset, year, totalItems)
+
+        currentOffset += limit
         totalItems = res['t']
+        dataVersion = res['dataVersion']
+
+        if len(dataVersion) == 0:
+          break
 
         papers = res['pr']
 
@@ -98,8 +98,5 @@ def crawling():
           data = [count_result, title, author_str, abstract, '', url]
           writer.writerow(data)
 
-        if (currentOffset + limit) >= totalItems:
-          break
-        currentOffset += limit
-
-crawling()
+for y in range(2018, 2021):
+  crawling(y)

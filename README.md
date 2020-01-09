@@ -37,14 +37,21 @@ publication_type = '1'
 limit = 10
 ```
 
+---
+**Crawling for year in range. E.g., `range(2018, 2021)` will crawl for 2018, 2019, and 2020**
+```python
+# crawler.py
+for y in range(2018, 2021):
+  crawling(y)
+```
+
 ### Launch the crawler
 
 ```sh
 $ python crawler.py
-Fetching 590/613 (96%)
-https://academic.microsoft.com/api/search
-Fetching 600/613 (98%)
-https://academic.microsoft.com/api/search
+Fetching 2014, uav = 590/613 (96%)
+...
+Fetching 2014, remote sensing = 600/613 (98%)
 ...
 ```
 
@@ -52,7 +59,8 @@ https://academic.microsoft.com/api/search
 csv files, that support UTF-8 encoding, named `MicrosoftAcademic-{Term}-YYYY-YYYY-MM-DD.csv` will be created in the same location of the crawlers/caller
 
 In which, 
-- The first `YYYY` is the announced year of publications.
+- The first `Term` is the keyword to search for publications.
+- The second `YYYY` is the announced year of publications.
 - `YYYY-MM-DD` is the crawling date.
 
 Ex., 
