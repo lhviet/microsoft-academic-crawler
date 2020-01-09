@@ -71,6 +71,24 @@ Ex.,
 ### Technology
 The Crawler uses [requests](https://pypi.org/project/requests/) library to send a `POST` query to get the needed information returned in JSON format.
 
+## Data Collection (How-to)
+- The crawled data was taken on Jan 08 and 09, 2020 (2020-Jan-09.zip)
+- To crawl the data, we manually change the code to run in many short ranges as below:
+```python
+for y in range(2000, 2004):
+  crawling(y)
+```
+```python
+for y in range(2004, 2006):
+  crawling(y)
+```
+...
+```python
+for y in range(2018, 2021):
+  crawling(y)
+```
+- The results are 21 CSV files for keyword `uav`, and 21 CSVs for keyword `remote sensing`. Each CSV is for one year, from 2000 to 2020.
+
 ## Future work
 Figure out to extract Keywords from Title & Abstract
 
